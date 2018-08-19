@@ -1,68 +1,47 @@
 package cn.creditease.client;
 
-import cn.creditease.entity.Article;
 import cn.creditease.entity.CallLog;
 import cn.creditease.entity.User;
-import cn.creditease.entity.UserCallLog;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
-import org.assertj.core.util.Maps;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.beans.PropertyDescriptor;
 import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class RestClientUtil {
-    public void getArticleByIdDemo() {
+
+    public void getUserByUuid(String uuid) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/user/article/{id}";
+        String url = "http://localhost:8080/db/user/{uuid}";
         HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
-        ResponseEntity<Article> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Article.class, 1);
-        Article article = responseEntity.getBody();
-        System.out.println("Id:"+article.getArticleId()+", Title:"+article.getTitle()
-                +", Category:"+article.getCategory());
+        ResponseEntity<User> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, User.class, 1);
+        User user = responseEntity.getBody();
+        System.out.println("uuid:"+user.getUuid()+", Name:"+user.getName());
     }
-    public void getAllArticlesDemo() {
+
+    public void getAllCallLogs() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/user/articles";
+        String url = "http://localhost:8080/db/calllog";
         HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
-        ResponseEntity<Article[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Article[].class);
-        Article[] articles = responseEntity.getBody();
-        for(Article article : articles) {
-            System.out.println("Id:"+article.getArticleId()+", Title:"+article.getTitle()
-                    +", Category: "+article.getCategory());
+        ResponseEntity<CallLog[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, CallLog[].class);
+        CallLog[] callLogs = responseEntity.getBody();
+        for(CallLog callLog : callLogs) {
+            System.out.println("uuid:"+callLog.getUuid()+", createdAt:"+callLog.getCreatedAt());
         }
-    }
-    public void addArticleDemo() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/user/article";
-        Article objArticle = new Article();
-        objArticle.setTitle("12 Spring REST Security using Hibernate");
-        objArticle.setCategory("Spring");
-        HttpEntity<Article> requestEntity = new HttpEntity<Article>(objArticle, headers);
-        URI uri = restTemplate.postForLocation(url, requestEntity);
-        System.out.println(uri.getPath());
     }
 
     public void addCallLog(CallLog callLog){
@@ -83,43 +62,10 @@ public class RestClientUtil {
         URI uri = restTemplate.postForLocation(url, requestEntity);
     }
 
-
-    public void updateArticleDemo() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/user/article";
-        Article objArticle = new Article();
-        objArticle.setArticleId(1);
-        objArticle.setTitle("Update:Java Concurrency");
-        objArticle.setCategory("Java");
-        HttpEntity<Article> requestEntity = new HttpEntity<Article>(objArticle, headers);
-        restTemplate.put(url, requestEntity);
-    }
-    public void deleteArticleDemo() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/user/article/{id}";
-        HttpEntity<Article> requestEntity = new HttpEntity<Article>(headers);
-        restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, Void.class, 1);
-    }
-
     public static void main(String args[]) throws Exception {
         RestClientUtil util = new RestClientUtil();
-//        //util.getArticleByIdDemo();
-//        util.addArticleDemo();
-//        //util.updateArticleDemo();
-//        //util.deleteArticleDemo();
-//        util.getAllArticlesDemo();
-//        Gson gs = new Gson();
-//        User ur = new User("hcc", "bj");
-//        String str = gs.toJson(ur);
-//        User u1 = (User) gs.fromJson(str, User.class);
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        String nowTime = "2018-03-22 21:25:33";
-//        Date dt = new Date(sdf.parse(nowTime).getTime());
-
+//        util.getAllCallLogs();
+//        util.getUserByUuid("1");
         try {
             util.loadUser2DB("/Users/hcc/Downloads/bootcamp/BootCamp_users_info.csv");
             util.loadCallLog2DB("/Users/hcc/Downloads/bootcamp/BootCamp_call_log.txt");
@@ -147,7 +93,7 @@ public class RestClientUtil {
             String str = null;
             Gson gs=  new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
             CallLog cg = new CallLog();
-
+            //int ct = 0;
             while((str = br.readLine()) != null) {
                 UserCallLog ucl = (UserCallLog) gs.fromJson(str, UserCallLog.class);
                 List<CallLog> callLogList = new ArrayList<CallLog>();
@@ -163,6 +109,8 @@ public class RestClientUtil {
                     cg.setDeviceId(cl.getDeviceId());
                     addCallLog(cg);
                 }
+//                ct++;
+//                if(ct == 10) break;
                 System.out.println(str);
             }
 
@@ -174,7 +122,6 @@ public class RestClientUtil {
         }
 
     }
-
 
     public List<User> readCSV(String filepath) throws IOException {
 

@@ -7,23 +7,22 @@ import java.util.List;
 
 public class CallLog{
 
-        private int callType;
-        private Timestamp callTime;
-        private int callLogId;
-        private String phone;
-        private String deviceId;
-        private int duration;
-        private Timestamp createdAt;
+    public String uuid;
+    private int callType;
+    private Timestamp callTime;
+    private String callLogId;
+    private String phone;
+    private String deviceId;
+    private int duration;
+    private Timestamp createdAt;
 
-        public String uuid;
-
-        public String getUuid() {
-            return uuid;
-        }
-
-        public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public String getUuid() {
+        return uuid;
     }
+
+    public void setUuid(String uuid) {
+    this.uuid = uuid;
+}
 
     public int getCallType() {
         return callType;
@@ -41,11 +40,11 @@ public class CallLog{
         this.callTime = callTime;
     }
 
-    public int getCallLogId() {
+    public String getCallLogId() {
         return callLogId;
     }
 
-    public void setCallLogId(int callLogId) {
+    public void setCallLogId(String callLogId) {
         this.callLogId = callLogId;
     }
 

@@ -11,7 +11,7 @@ public class CallLogRowMapper implements RowMapper<CallLog> {
         CallLog callLog = new CallLog();
         callLog.setCallType(row.getInt("callType"));
         callLog.setCallTime(row.getTimestamp("callTime"));
-        callLog.setCallLogId(row.getInt("callLogId"));
+        callLog.setCallLogId(row.getString("callLogId"));
         callLog.setPhone(row.getString("phone"));
         callLog.setDeviceId(row.getString("deviceId"));
         callLog.setDuration(row.getInt("duration"));

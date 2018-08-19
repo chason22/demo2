@@ -25,14 +25,14 @@ public class CallLogDAO implements ICallLogDAO {
 
     @Override
     public List<CallLog> getAllCallLog() {
-        String sql = "SELECT * FROM calllog_record";
+        String sql = "SELECT * FROM call_record";
         RowMapper<CallLog> rowMapper = new BeanPropertyRowMapper<CallLog>(CallLog.class);
         return jdbcTemplate.query(sql, rowMapper);
     }
 
     @Override
     public List<CallLog> getCallLogByUuid(String uuid) {
-        String sql = "SELECT * FROM calllog_record WHERE uuid = ?";
+        String sql = "SELECT * FROM call_record WHERE uuid = ?";
         RowMapper<CallLog> rowMapper = new CallLogRowMapper();
         List<Map<String, Object>> ls = jdbcTemplate.queryForList(sql, new Object[]{uuid}, rowMapper);
         List<CallLog> rs = new ArrayList<CallLog>();
@@ -42,9 +42,10 @@ public class CallLogDAO implements ICallLogDAO {
             cl.setDuration((Integer) item.get("duration"));
             cl.setDeviceId((String) item.get("deviceId"));
             cl.setPhone((String) item.get("phone"));
-            cl.setCallLogId((Integer) item.get("callLogId"));
+            cl.setCallLogId((String) item.get("callLogId"));
             cl.setCallTime((Timestamp) item.get("callTime"));
             cl.setCallType((Integer) item.get("callType"));
+            cl.setUuid((String) item.get("uuid"));
             rs.add(cl);
         }
         return rs;
@@ -52,7 +53,8 @@ public class CallLogDAO implements ICallLogDAO {
 
     @Override
     public void addCallLog(CallLog callLog) {
-        String sql = "INSERT INTO calllog_record (uuid, callType, callTime, callLogId, phone, deviceId, duration, createdAt) values (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO call_record (uuid, callType, callTime, callLogId, phone, deviceId, duration, createdAt) values (?, ?, ?, ?, ?, ?, ?, ?)";
+        System.out.println("phone: " + callLog.getPhone());
         jdbcTemplate.update(sql, callLog.getUuid(), callLog.getCallType(), callLog.getCallTime(), callLog.getCallLogId(), callLog.getPhone(), callLog.getDeviceId(), callLog.getDuration(), callLog.getCreatedAt());
     }
 

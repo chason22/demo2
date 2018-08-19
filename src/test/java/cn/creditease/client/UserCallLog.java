@@ -1,4 +1,4 @@
-package cn.creditease.entity;
+package cn.creditease.client;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -11,7 +11,7 @@ public class UserCallLog {
 
         private int callType;
         private Timestamp callTime;
-        private int callLogId;
+        private String callLogId;
         private String phone;
         private String deviceId;
         private int duration;
@@ -34,11 +34,11 @@ public class UserCallLog {
             this.callTime = callTime;
         }
 
-        public int getCallLogId() {
+        public String getCallLogId() {
             return callLogId;
         }
 
-        public void setCallLogId(int callLogId) {
+        public void setCallLogId(String callLogId) {
             this.callLogId = callLogId;
         }
 
